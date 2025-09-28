@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudos Médicos</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <h1 class="header__title">📚 Estudos Médicos</h1>
+                <div class="header__stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalStudies">0</span>
+                        <span class="stat-label">Estudos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="averagePerformance">0%</span>
+                        <span class="stat-label">Aproveitamento</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="pendingReviews">0</span>
+                        <span class="stat-label">Revisões</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="container">
+                <div class="nav__tabs">
+                    <button class="nav__tab active" data-tab="inicio">Início</button>
+                    <button class="nav__tab" data-tab="registrar">Registrar Estudo</button>
+                    <button class="nav__tab" data-tab="revisoes">Revisões</button>
+                    <button class="nav__tab" data-tab="historico">Histórico</button>
+                    <button class="nav__tab" data-tab="configuracoes">Configurações</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Início Tab -->
+                <div class="tab-content active" id="inicio">
+                    <div class="dashboard">
+                        <div class="dashboard__grid">
+                            <div class="card">
+                                <div class="card__body">
+                                    <h3>Performance por Disciplina</h3>
+                                    <div class="chart-container" style="position: relative; height: 300px;">
+                                        <canvas id="disciplineChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card__body">
+                                    <h3>Evolução Temporal</h3>
+                                    <div class="chart-container" style="position: relative; height: 300px;">
+                                        <canvas id="timeChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard__summary">
+                            <div class="card">
+                                <div class="card__body">
+                                    <h3>Resumo de Atividades</h3>
+                                    <div class="activity-list" id="recentActivities">
+                                        <p class="text-center">Nenhum estudo registrado ainda.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registrar Tab -->
+                <div class="tab-content" id="registrar">
+                    <div class="study-form-container">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Registrar Novo Estudo</h2>
+                                <form id="studyForm" class="study-form">
+                                    <div class="form-group">
+                                        <label for="discipline" class="form-label">Disciplina *</label>
+                                        <select id="discipline" class="form-control" required>
+                                            <option value="">Selecione uma disciplina</option>
+                                        </select>
+                                        <div class="error-message" id="disciplineError"></div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="topic" class="form-label">Assunto *</label>
+                                        <select id="topic" class="form-control" required>
+                                            <option value="">Primeiro selecione uma disciplina</option>
+                                        </select>
+                                        <input type="text" id="customTopic" class="form-control hidden" placeholder="Digite o assunto customizado">
+                                        <div class="error-message" id="topicError"></div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="correctAnswers" class="form-label">Questões Certas *</label>
+                                            <input type="number" id="correctAnswers" class="form-control" min="0" required>
+                                            <div class="error-message" id="correctAnswersError"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="totalQuestions" class="form-label">Total de Questões *</label>
+                                            <input type="number" id="totalQuestions" class="form-control" min="1" required>
+                                            <div class="error-message" id="totalQuestionsError"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="studyDate" class="form-label">Data do Estudo *</label>
+                                        <input type="date" id="studyDate" class="form-control" required>
+                                        <div class="error-message" id="studyDateError"></div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="observations" class="form-label">Observações</label>
+                                        <textarea id="observations" class="form-control" rows="3" placeholder="Observações sobre o estudo (opcional)"></textarea>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn--primary btn--full-width">
+                                            Salvar Estudo
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revisões Tab -->
+                <div class="tab-content" id="revisoes">
+                    <div class="reviews-container">
+                        <h2>Sistema de Revisões</h2>
+                        <div class="reviews-grid">
+                            <div class="card">
+                                <div class="card__body">
+                                    <h3>🔴 Revisões Atrasadas</h3>
+                                    <div id="overdueReviews" class="review-list">
+                                        <p class="text-center">Nenhuma revisão atrasada</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card__body">
+                                    <h3>🟡 Revisões de Hoje</h3>
+                                    <div id="todayReviews" class="review-list">
+                                        <p class="text-center">Nenhuma revisão para hoje</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card__body">
+                                    <h3>🟢 Próximas Revisões</h3>
+                                    <div id="upcomingReviews" class="review-list">
+                                        <p class="text-center">Nenhuma revisão próxima</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Histórico Tab -->
+                <div class="tab-content" id="historico">
+                    <div class="history-container">
+                        <div class="history-header">
+                            <h2>Histórico de Estudos</h2>
+                            <div class="history-filters">
+                                <select id="historyFilter" class="form-control">
+                                    <option value="all">Todas as Disciplinas</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="history-list" id="historyList">
+                            <p class="text-center">Nenhum estudo registrado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações Tab -->
+                <div class="tab-content" id="configuracoes">
+                    <div class="settings-container">
+                        <h2>Configurações</h2>
+                        <div class="settings-grid">
+                            <div class="card">
+                                <div class="card__body">
+                                    <h3>Disciplinas Customizadas</h3>
+                                    <div class="form-group">
+                                        <input type="text" id="newDisciplineName" class="form-control" placeholder="Nome da disciplina">
+                                        <button type="button" id="addDisciplineBtn" class="btn btn--secondary mt-8">
+                                            Adicionar Disciplina
+                                        </button>
+                                    </div>
+                                    <div id="customDisciplinesList" class="custom-disciplines-list">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card__body">
+                                    <h3>Gerenciar Dados</h3>
+                                    <div class="data-actions">
+                                        <button type="button" id="exportDataBtn" class="btn btn--outline">
+                                            Exportar Dados
+                                        </button>
+                                        <button type="button" id="importDataBtn" class="btn btn--outline">
+                                            Importar Dados
+                                        </button>
+                                        <input type="file" id="importFileInput" accept=".json" class="hidden">
+                                        <button type="button" id="clearDataBtn" class="btn btn--secondary">
+                                            Limpar Todos os Dados
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="bottom-nav__item active" data-tab="inicio">
+                <span class="bottom-nav__icon">🏠</span>
+                <span class="bottom-nav__label">Início</span>
+            </button>
+            <button class="bottom-nav__item" data-tab="registrar">
+                <span class="bottom-nav__icon">📝</span>
+                <span class="bottom-nav__label">Registrar</span>
+            </button>
+            <button class="bottom-nav__item" data-tab="revisoes">
+                <span class="bottom-nav__icon">🔄</span>
+                <span class="bottom-nav__label">Revisões</span>
+            </button>
+            <button class="bottom-nav__item" data-tab="historico">
+                <span class="bottom-nav__icon">📊</span>
+                <span class="bottom-nav__label">Histórico</span>
+            </button>
+            <button class="bottom-nav__item" data-tab="configuracoes">
+                <span class="bottom-nav__icon">⚙️</span>
+                <span class="bottom-nav__label">Config</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
